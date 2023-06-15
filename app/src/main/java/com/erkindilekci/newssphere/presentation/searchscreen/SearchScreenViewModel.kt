@@ -1,4 +1,4 @@
-package com.erkindilekci.newssphere.presentation.listscreen
+package com.erkindilekci.newssphere.presentation.searchscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,25 +13,22 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class ListScreenViewModel @Inject constructor(
+class SearchScreenViewModel @Inject constructor(
     private val repository: NewsRepository
 ) : ViewModel() {
 
-    val breakingNews: MutableStateFlow<Resource<NewsResponse>> =
+    val searchedNews: MutableStateFlow<Resource<NewsResponse>> =
         MutableStateFlow(Resource.Loading())
-    var breakingNewsPage = 1
+    var searchNewsPage = 1
 
-    init {
-        getBreakingNews("us")
+
+    fun searchNews(searchQuery: String) = viewModelScope.launch(Dispatchers.IO) {
+        searchedNews.value = Resource.Loading()
+        val response = repository.searchNews(searchQuery, searchNewsPage)
+        searchedNews.value = handleSearchNewsResponse(response)
     }
 
-    private fun getBreakingNews(countryCode: String) = viewModelScope.launch(Dispatchers.IO) {
-        breakingNews.value = Resource.Loading()
-        val response = repository.getBreakingNews(countryCode, breakingNewsPage)
-        breakingNews.value = handleBreakingNewsResponse(response)
-    }
-
-    private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+    private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
@@ -39,5 +36,4 @@ class ListScreenViewModel @Inject constructor(
         }
         return Resource.Error(response.message())
     }
-
 }

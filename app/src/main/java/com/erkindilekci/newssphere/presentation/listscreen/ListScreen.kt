@@ -1,6 +1,5 @@
 package com.erkindilekci.newssphere.presentation.listscreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,8 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.erkindilekci.newssphere.R
+import com.erkindilekci.newssphere.presentation.util.BottomNavigationBar
 import com.erkindilekci.newssphere.util.Resource
 import com.erkindilekci.newssphere.util.Screen
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,7 +45,7 @@ fun ListScreen(
     navController: NavController,
     viewModel: ListScreenViewModel = hiltViewModel()
 ) {
-    val response = viewModel.news.asStateFlow().collectAsState().value
+    val response = viewModel.breakingNews.asStateFlow().collectAsState().value
 
     Scaffold(
         topBar = {
@@ -70,6 +71,9 @@ fun ListScreen(
                     )
                 }
             }
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) {
         when (response) {
@@ -98,20 +102,17 @@ fun ListScreen(
                                 },
                         ) {
                             Column {
-                                Image(
+                                AsyncImage(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .aspectRatio(16f / 9f),
-                                    painter = rememberImagePainter(
-                                        data = new.urlToImage,
-                                        builder = {
-                                            placeholder(R.drawable.placeholder)
-                                            error(R.drawable.placeholder)
-                                        }
-                                    ),
+                                    model = new.urlToImage,
                                     contentDescription = null,
+                                    placeholder = painterResource(id = R.drawable.placeholder),
+                                    error = painterResource(id = R.drawable.placeholder),
                                     contentScale = ContentScale.FillWidth
                                 )
+
                                 Column(Modifier.padding(8.dp)) {
                                     Text(
                                         new.title,
@@ -128,7 +129,6 @@ fun ListScreen(
                                     )
                                 }
                             }
-
                         }
                     }
                 }

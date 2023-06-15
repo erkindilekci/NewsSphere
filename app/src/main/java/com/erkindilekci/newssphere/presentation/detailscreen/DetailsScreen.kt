@@ -12,33 +12,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.erkindilekci.newssphere.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(
-    title: String,
     navController: NavController,
     viewModel: DetailsScreenViewModel = hiltViewModel()
 ) {
-    val new by viewModel.getNew(title).collectAsState()
-    val url = new?.let { it.url } ?: ""
+    val article by viewModel.new.collectAsState()
+    val url = article?.let { it.url } ?: ""
+
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Row(
                 modifier = Modifier
@@ -48,7 +61,7 @@ fun DetailsScreen(
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = title,
+                        text = article?.title ?: "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -70,6 +83,22 @@ fun DetailsScreen(
                     }
                 }
             }
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text(text = "Save") },
+                onClick = {
+                    article?.let { viewModel.saveArticle(it) }
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            "Saved: ${article?.title}"
+                        )
+                    }
+                },
+                icon = { Icon(painter = painterResource(id = R.drawable.save), null) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
+            )
         }
     ) {
         Column(

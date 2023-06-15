@@ -1,4 +1,4 @@
-package com.erkindilekci.newssphere.presentation.ui.theme
+package com.erkindilekci.newssphere.presentation.util.ui.theme
 
 import android.app.Activity
 import android.os.Build

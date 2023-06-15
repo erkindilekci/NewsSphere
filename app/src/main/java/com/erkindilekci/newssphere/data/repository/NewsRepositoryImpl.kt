@@ -31,9 +31,24 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun searchNews(searchQuery: String, pageNumber: Int) =
-        api.searchForNews(searchQuery, pageNumber)
+    override suspend fun searchNews(searchQuery: String, pageNumber: Int): Response<NewsResponse> {
+        val response = api.searchForNews(searchQuery, pageNumber)
+        news = response.body()?.articles ?: emptyList()
+        return response
+    }
 
-    override suspend fun getNews(title: String): Article =
-        news.first { it.title == title }
+    override fun getNews(title: String): Article? {
+        val article = news.firstOrNull { it.title == title }
+        return article
+    }
+
+    override suspend fun insertArticle(article: Article) {
+        db.articleDao().insertArticle(article)
+    }
+
+    override fun getSavedNews() = db.articleDao().getAllArticles()
+
+    override suspend fun deleteArticle(article: Article) {
+        db.articleDao().deleteArticle(article)
+    }
 }

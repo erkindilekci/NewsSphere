@@ -1,6 +1,5 @@
 package com.erkindilekci.newssphere.presentation.searchscreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -39,9 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.erkindilekci.newssphere.R
-import com.erkindilekci.newssphere.presentation.listscreen.ListScreenViewModel
 import com.erkindilekci.newssphere.util.Resource
 import com.erkindilekci.newssphere.util.Screen
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,7 +48,7 @@ import kotlinx.coroutines.flow.asStateFlow
 @Composable
 fun SearchScreen(
     navController: NavController,
-    viewModel: ListScreenViewModel = hiltViewModel()
+    viewModel: SearchScreenViewModel = hiltViewModel()
 ) {
     val response = viewModel.searchedNews.asStateFlow().collectAsState().value
 
@@ -68,13 +66,9 @@ fun SearchScreen(
                     Text(
                         modifier = Modifier
                             .alpha(alpha = 0.6f),
-                        text = "Search...",
-                        color = Color.White
+                        text = "Search..."
                     )
                 },
-                textStyle = TextStyle(
-                    color = Color.Black
-                ),
                 singleLine = true,
                 leadingIcon = {
                     IconButton(
@@ -117,8 +111,6 @@ fun SearchScreen(
                     }
                 ),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Red,
-                    cursorColor = Color.Black,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
@@ -137,12 +129,14 @@ fun SearchScreen(
 
             is Resource.Success -> {
                 Column {
+                    val articles = response.data?.articles ?: emptyList()
+
                     LazyColumn(
                         modifier = Modifier
                             .padding(it)
                             .fillMaxSize()
                     ) {
-                        items(response.data?.articles ?: emptyList()) { new ->
+                        items(articles) { new ->
                             Card(
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
@@ -153,20 +147,17 @@ fun SearchScreen(
                                     },
                             ) {
                                 Column {
-                                    Image(
+                                    AsyncImage(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .aspectRatio(16f / 9f),
-                                        painter = rememberImagePainter(
-                                            data = new.urlToImage,
-                                            builder = {
-                                                placeholder(R.drawable.placeholder)
-                                                error(R.drawable.placeholder)
-                                            }
-                                        ),
+                                        model = new.urlToImage,
                                         contentDescription = null,
+                                        placeholder = painterResource(id = R.drawable.placeholder),
+                                        error = painterResource(id = R.drawable.placeholder),
                                         contentScale = ContentScale.FillWidth
                                     )
+
                                     Column(Modifier.padding(8.dp)) {
                                         Text(
                                             new.title,
@@ -183,7 +174,6 @@ fun SearchScreen(
                                         )
                                     }
                                 }
-
                             }
                         }
                     }

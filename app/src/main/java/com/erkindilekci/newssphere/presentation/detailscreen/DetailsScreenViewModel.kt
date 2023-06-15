@@ -1,5 +1,6 @@
 package com.erkindilekci.newssphere.presentation.detailscreen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.erkindilekci.newssphere.domain.model.Article
@@ -14,16 +15,27 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsScreenViewModel @Inject constructor(
-    private val repository: NewsRepository
+    private val repository: NewsRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _new = MutableStateFlow<Article?>(null)
+    val new = MutableStateFlow<Article?>(null)
+
+    init {
+        savedStateHandle.get<String>("newTitle")?.let { title ->
+            getNew(title)
+        }
+    }
 
     fun getNew(title: String): StateFlow<Article?> {
         viewModelScope.launch(Dispatchers.IO) {
             val news = repository.getNews(title)
-            _new.value = news
+            new.value = news
         }
-        return _new.asStateFlow()
+        return new.asStateFlow()
     }
-}    
+
+    fun saveArticle(article: Article) = viewModelScope.launch {
+        repository.insertArticle(article)
+    }
+}

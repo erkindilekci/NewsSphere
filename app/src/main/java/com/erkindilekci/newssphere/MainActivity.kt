@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.erkindilekci.newssphere.presentation.ui.theme.NewsSphereTheme
+import com.erkindilekci.newssphere.presentation.util.ui.theme.NewsSphereTheme
 import com.erkindilekci.newssphere.util.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 
