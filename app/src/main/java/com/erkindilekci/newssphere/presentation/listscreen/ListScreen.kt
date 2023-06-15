@@ -36,6 +36,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.erkindilekci.newssphere.R
 import com.erkindilekci.newssphere.presentation.util.BottomNavigationBar
+import com.erkindilekci.newssphere.presentation.util.ErrorScreen
+import com.erkindilekci.newssphere.presentation.util.LoadingScreen
 import com.erkindilekci.newssphere.util.Resource
 import com.erkindilekci.newssphere.util.Screen
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,11 +80,11 @@ fun ListScreen(
     ) {
         when (response) {
             is Resource.Error -> {
-
+                ErrorScreen("Error")
             }
 
             is Resource.Loading -> {
-
+                LoadingScreen()
             }
 
             is Resource.Success -> {
@@ -115,7 +117,7 @@ fun ListScreen(
 
                                 Column(Modifier.padding(8.dp)) {
                                     Text(
-                                        new.title,
+                                        new.title ?: "",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Justify

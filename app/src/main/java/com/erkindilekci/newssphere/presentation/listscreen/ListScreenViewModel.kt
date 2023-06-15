@@ -22,7 +22,7 @@ class ListScreenViewModel @Inject constructor(
     var breakingNewsPage = 1
 
     init {
-        getBreakingNews("us")
+        getBreakingNews("US")
     }
 
     private fun getBreakingNews(countryCode: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -39,5 +39,4 @@ class ListScreenViewModel @Inject constructor(
         }
         return Resource.Error(response.message())
     }
-
 }

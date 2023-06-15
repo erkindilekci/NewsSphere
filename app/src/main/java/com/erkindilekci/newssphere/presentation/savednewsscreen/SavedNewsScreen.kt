@@ -129,7 +129,7 @@ fun SavedNewsScreen(
                                     )
                                     Column(Modifier.padding(8.dp)) {
                                         Text(
-                                            article.title,
+                                            article.title ?: "",
                                             fontSize = 18.sp,
                                             fontWeight = FontWeight.Bold,
                                             textAlign = TextAlign.Justify

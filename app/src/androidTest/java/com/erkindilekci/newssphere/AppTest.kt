@@ -30,6 +30,5 @@ class AppTest {
 
         composeRule.onNodeWithText("Title1").assertExists()
         composeRule.onNodeWithText("Title2").assertExists()
-
     }
 }
