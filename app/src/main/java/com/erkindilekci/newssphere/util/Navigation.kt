@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.erkindilekci.newssphere.presentation.detailscreen.DetailsScreen
 import com.erkindilekci.newssphere.presentation.listscreen.ListScreen
+import com.erkindilekci.newssphere.presentation.searchscreen.SearchScreen
 
 @Composable
 fun Navigation() {
@@ -21,6 +22,9 @@ fun Navigation() {
             it.arguments?.getString("newTitle")?.let { title ->
                 DetailsScreen(title = title, navController = navController)
             }
+        }
+        composable(Screen.SearchScreen.route) {
+            SearchScreen(navController = navController)
         }
     }
 }

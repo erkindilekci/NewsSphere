@@ -1,5 +1,6 @@
 package com.erkindilekci.newssphere.di
 
+import com.erkindilekci.newssphere.data.data_soruce.local.ArticleDatabase
 import com.erkindilekci.newssphere.data.data_soruce.remote.NewsApi
 import com.erkindilekci.newssphere.data.repository.NewsRepositoryImpl
 import com.erkindilekci.newssphere.domain.repository.NewsRepository
@@ -15,5 +16,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideNewsRepository(api: NewsApi): NewsRepository = NewsRepositoryImpl(api)
+    fun provideNewsRepository(
+        api: NewsApi,
+        db: ArticleDatabase
+    ): NewsRepository = NewsRepositoryImpl(api, db)
 }

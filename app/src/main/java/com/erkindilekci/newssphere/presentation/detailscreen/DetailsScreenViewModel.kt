@@ -2,7 +2,7 @@ package com.erkindilekci.newssphere.presentation.detailscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.erkindilekci.newssphere.domain.model.News
+import com.erkindilekci.newssphere.domain.model.Article
 import com.erkindilekci.newssphere.domain.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,11 +17,11 @@ class DetailsScreenViewModel @Inject constructor(
     private val repository: NewsRepository
 ) : ViewModel() {
 
-    private val _new = MutableStateFlow<News?>(null)
+    private val _new = MutableStateFlow<Article?>(null)
 
-    fun getNew(title: String): StateFlow<News?> {
+    fun getNew(title: String): StateFlow<Article?> {
         viewModelScope.launch(Dispatchers.IO) {
-            val news = repository.getNew(title)
+            val news = repository.getNews(title)
             _new.value = news
         }
         return _new.asStateFlow()
