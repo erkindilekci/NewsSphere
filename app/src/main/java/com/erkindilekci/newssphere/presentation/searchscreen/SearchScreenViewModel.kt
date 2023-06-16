@@ -8,6 +8,7 @@ import com.erkindilekci.newssphere.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -17,15 +18,16 @@ class SearchScreenViewModel @Inject constructor(
     private val repository: NewsRepository
 ) : ViewModel() {
 
-    val searchedNews: MutableStateFlow<Resource<NewsResponse>> =
+    val _searchedNews: MutableStateFlow<Resource<NewsResponse>> =
         MutableStateFlow(Resource.Loading())
+    val searchedNews: StateFlow<Resource<NewsResponse>> get() = _searchedNews
     var searchNewsPage = 1
 
 
     fun searchNews(searchQuery: String) = viewModelScope.launch(Dispatchers.IO) {
-        searchedNews.value = Resource.Loading()
+        _searchedNews.value = Resource.Loading()
         val response = repository.searchNews(searchQuery, searchNewsPage)
-        searchedNews.value = handleSearchNewsResponse(response)
+        _searchedNews.value = handleSearchNewsResponse(response)
     }
 
     private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {

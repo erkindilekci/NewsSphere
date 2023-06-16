@@ -43,7 +43,7 @@ fun DetailsScreen(
     navController: NavController,
     viewModel: DetailsScreenViewModel = hiltViewModel()
 ) {
-    val article by viewModel.new.collectAsState()
+    val article by viewModel.article.collectAsState()
     val url = article?.let { it.url } ?: ""
 
 

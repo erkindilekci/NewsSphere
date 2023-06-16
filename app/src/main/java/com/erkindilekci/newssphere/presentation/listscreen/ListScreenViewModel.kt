@@ -8,6 +8,7 @@ import com.erkindilekci.newssphere.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -17,18 +18,20 @@ class ListScreenViewModel @Inject constructor(
     private val repository: NewsRepository
 ) : ViewModel() {
 
-    val breakingNews: MutableStateFlow<Resource<NewsResponse>> =
+    private val _breakingNews: MutableStateFlow<Resource<NewsResponse>> =
         MutableStateFlow(Resource.Loading())
+    val breakingNews: StateFlow<Resource<NewsResponse>> get() = _breakingNews
+
     var breakingNewsPage = 1
 
     init {
         getBreakingNews("US")
     }
 
-    private fun getBreakingNews(countryCode: String) = viewModelScope.launch(Dispatchers.IO) {
-        breakingNews.value = Resource.Loading()
+    fun getBreakingNews(countryCode: String, page: Int = breakingNewsPage) = viewModelScope.launch(Dispatchers.IO) {
+        _breakingNews.value = Resource.Loading()
         val response = repository.getBreakingNews(countryCode, breakingNewsPage)
-        breakingNews.value = handleBreakingNewsResponse(response)
+        _breakingNews.value = handleBreakingNewsResponse(response)
     }
 
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {

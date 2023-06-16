@@ -19,7 +19,8 @@ class DetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val new = MutableStateFlow<Article?>(null)
+    val _article = MutableStateFlow<Article?>(null)
+    val article: StateFlow<Article?> get() = _article
 
     init {
         savedStateHandle.get<String>("newTitle")?.let { title ->
@@ -30,9 +31,9 @@ class DetailsScreenViewModel @Inject constructor(
     fun getNew(title: String): StateFlow<Article?> {
         viewModelScope.launch(Dispatchers.IO) {
             val news = repository.getNews(title)
-            new.value = news
+            _article.value = news
         }
-        return new.asStateFlow()
+        return _article.asStateFlow()
     }
 
     fun saveArticle(article: Article) = viewModelScope.launch {

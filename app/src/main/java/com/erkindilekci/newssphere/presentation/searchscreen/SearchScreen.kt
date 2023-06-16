@@ -52,7 +52,7 @@ fun SearchScreen(
     navController: NavController,
     viewModel: SearchScreenViewModel = hiltViewModel()
 ) {
-    val response = viewModel.searchedNews.asStateFlow().collectAsState().value
+    val response = viewModel.searchedNews.collectAsState().value
 
     var searchQuery by remember { mutableStateOf("") }
 
@@ -126,7 +126,9 @@ fun SearchScreen(
             }
 
             is Resource.Loading -> {
-                LoadingScreen()
+                if (response.data?.articles != null) {
+                    LoadingScreen()
+                }
             }
 
             is Resource.Success -> {
