@@ -8,6 +8,7 @@
 - Room
 - Retrofit
 - Gson
+- Paging3
 - Dagger-Hilt
 - Clean Architecture
 - MVVM
