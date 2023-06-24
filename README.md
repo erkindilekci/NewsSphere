@@ -1,5 +1,6 @@
 # News Sphere
 
+
 <img src="https://raw.githubusercontent.com/erkindil/GithubRepositoryEdit/main/News%20Sphere.gif" align="right" width="165">
 
 - Jetpack Compose
